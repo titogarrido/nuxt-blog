@@ -1,21 +1,23 @@
 ---
 title: Terraform and KVM (x86)
-published: 2019-05-22
+published: 2019-05-22T00:00:00.000Z
 tags: terraform,kvm,cloud
 ---
 
-[Terraform](terraform.io) is what they call "Infrastructure as a code". It has a different approach from other automation tools like Puppet, Chef or Ansible because it is focused on Cloud Infrastructure.
+[Terraform](https://terraform.io) is what they call "Infrastructure as a code". It has a different approach from other automation tools like Puppet, Chef or Ansible because it is focused on Cloud Infrastructure.
 
 It supports a bunch of [providers](https://www.terraform.io/docs/providers/index.html) like AWS, Azure, Softlayer... but, as you can see, there is no official support for KVM. I don't want to create a AWS account just to try terraform, so in this article I am going to write step by step how to create a KVM virtual environment using [Terraform libvirt provider](https://github.com/dmacvicar/terraform-provider-libvirt).
 
 ---
-**Update:** 
+
+**Update:**
 
 **05/22/2019** - This article has been updated to support Terraform 0.11.14 and libvirt provider 0.5.1.
 
 ---
 
 ## Pre-requisites
+
 - x86 server
 - Ubuntu 16.04 or 18.04
 - KVM installed and configured
@@ -31,11 +33,10 @@ It supports a bunch of [providers](https://www.terraform.io/docs/providers/index
 
 First find the appropriate package for Linux on [Terraform Download page](https://www.terraform.io/downloads.html).
 
-I am using [https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip](https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip) that is the latest version available to me.
+I am using <https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip> that is the latest version available to me.
 
 ```bash
 wget https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
-
 ```
 
 Unzip it, it is just a binary that we will move to _/usr/local/bin_ :
@@ -45,12 +46,13 @@ root@ubuntu-host:~# unzip terraform_0.11.14_linux_amd64.zip
 Archive:  terraform_0.11.14_linux_amd64.zip
   inflating: terraform
 ```
+
 ```bash
 root@ubuntu-host:~# chmod +x terraform
 root@ubuntu-host:~# mv terraform /usr/local/bin/
 ```
 
-Verifying the Installation 
+Verifying the Installation
 
 ```bash
 root@ubuntu-host:~$ terraform
@@ -96,6 +98,7 @@ Next step, install libvirt provider!
 ## Installing Terraform libvirt Provider
 
 If you want to build the latest version the libvirt provide will require:
+
 - libvirt 1.2.14 or newer
 - latest golang version
 - mkisofs is required to use the CloudInit feature.
@@ -125,7 +128,7 @@ apt autoremove
 apt-get install golang-1.9-go
 ```
 
-Add golang 1.9 to your PATH, create a file on _/etc/profile.d_: 
+Add golang 1.9 to your PATH, create a file on _/etc/profile.d_:
 
 ```bash
 vim /etc/profile.d/golang19.sh
@@ -218,7 +221,6 @@ We'll build infrastructure on KVM. Our configuration file will create a NAT netw
 
 Create a new file called "libvirt.tf" and copy the content below. The format of the configuration files is [documented here](https://www.terraform.io/docs/configuration/index.html).
 
-
 ```bash
 # instance the provider
 provider "libvirt" {
@@ -238,7 +240,7 @@ resource "libvirt_network" "vm_network" {
    name = "vm_network"
    addresses = ["10.0.1.0/24"]
    dhcp {
-	enabled = true
+    enabled = true
    }
 }
 
@@ -299,18 +301,20 @@ resource "libvirt_domain" "domain-ubuntu" {
 ```
 
 The _provider_ block is used to configure the named provider, in our case "libvirt". If you want to connect to a remote KVM host you can change the uri to something like:
+
 ```bash
 provider "libvirt" {
   uri = "virsh -c qemu+ssh://ubuntu@yourhostname.com/system?socket=/var/run/libvirt/libvirt-sock"
 }
 ```
+
 Make sure that the user _ubuntu_, for example, has the proper permission to execute _virsh_ commands.
 
 The _resource_ block defines a resource that exists within the infrastructure. We have defined:
 
-- _libvirt_volume_ that is a qcow2 disk that will be created inside our storage pool called "_images_" (**Note**: KVM creates a storage pool called "_default_" during the installation, this example uses "_images_" as a storage pool, change to your storage pool accordingly.)
-- _libvirt_network_ will create a NAT network called "_vm_network_" using network "10.0.1.0/24" for DHCP.
-- _libvirt_domain_ defines our guest "ubuntu-terraform" with 512MB of RAM, 1 vcpu, with a network interface and our qcow disk created on "_libvirt_volume_" resource.
+- _libvirt\_volume_ that is a qcow2 disk that will be created inside our storage pool called "_images_" (**Note**: KVM creates a storage pool called "_default_" during the installation, this example uses "_images_" as a storage pool, change to your storage pool accordingly.)
+- _libvirt\_network_ will create a NAT network called "_vm\_network_" using network "10.0.1.0/24" for DHCP.
+- _libvirt\_domain_ defines our guest "ubuntu-terraform" with 512MB of RAM, 1 vcpu, with a network interface and our qcow disk created on "_libvirt\_volume_" resource.
 - There are 2 templates files that we will need to create for _cloudinit_. They will define our user data and network interface information.
 
 For the _user data_ we will create a file called `cloud_init.cfg` and paste the content below:
@@ -341,16 +345,14 @@ growpart:
 
 (All available parameters for cloudinit can be [found here](https://cloudinit.readthedocs.io/en/latest/topics/modules.html "Cloudinit parameters"))
 
-- The configuration above creates an user called _ubuntu_ that will have SUDO access without password, an authorized key for passwordless access (**Note**: change it to your id_rsa.pub), it will also allow password access and the default password is _linux_.
-
-- The _package_ section will install _qemu-guest-agent_ package to provide us some facilities managing our VM. 
-
+- The configuration above creates an user called _ubuntu_ that will have SUDO access without password, an authorized key for passwordless access (**Note**: change it to your id\_rsa.pub), it will also allow password access and the default password is _linux_.
+- The _package_ section will install _qemu-guest-agent_ package to provide us some facilities managing our VM.
 - The _growpart_ statement resizes partitions to fill the available disk space.
 
 ```bash
 ubuntu@ubuntu-host:~/terraform/blogtest$ ls
 cloud_init.cfg  libvirt.tf
-````
+```
 
 Now we will create our last configuration file that will setup our network card, it will be called `network_config.cfg`. Paste the content below:
 
@@ -371,7 +373,6 @@ Now we have all the 3 files that we need in our _terraform_ folder:
 ubuntu@ubuntu-host:~/terraform/blogtest$ ls
 cloud_init.cfg  libvirt.tf  network_config.cfg
 ```
-
 
 ## Initialization
 
@@ -584,7 +585,7 @@ root@ubuntu-host:~/terraform# virsh net-list
  br0                  active     yes           yes
  default              active     yes           yes
  vm_network           active     no            yes
- ```
+```
 
 Access your new server:
 
@@ -593,9 +594,9 @@ ssh ubuntu@10.0.1.166
 ```
 
 It shouldn't ask a password because we have setup ssh authorized keys.
- 
- And that is it! Enjoy your new server, play with Terraform configuration file and try to increase the number of guests, networks and disks!
- 
- On a next article I will try to build a Kubernetes environment on KVM using Terraform!
- 
- See ya!
+
+And that is it! Enjoy your new server, play with Terraform configuration file and try to increase the number of guests, networks and disks!
+
+On a next article I will try to build a Kubernetes environment on KVM using Terraform!
+
+See ya!
