@@ -12,22 +12,22 @@
         </p>
         <div class="flex flex-col justify-start items-start space-y-4">
             <div>
-                <a href="https://twitter.com/yourtwitter" target="_blank" rel="noopener noreferrer">
+                <a href="https://twitter.com/titogarrido" target="_blank" rel="noopener noreferrer">
                     <Icon aria-hidden="true" name="iconoir:twitter" class="w-5 h-5" /> Twitter
                 </a>
             </div>
             <div>
-                <a href="https://www.linkedin.com/in/yourlinkedin" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.linkedin.com/in/titogarrido" target="_blank" rel="noopener noreferrer">
                     <Icon aria-hidden="true" name="iconoir:linkedin" class="w-5 h-5" /> LinkedIn
                 </a>
             </div>
             <div>
-                <a href="https://github.com/yourgithub" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/titogarrido" target="_blank" rel="noopener noreferrer">
                     <Icon aria-hidden="true" name="iconoir:github" class="w-5 h-5" /> GitHub
                 </a>
             </div>
             <div>
-                <a href="https://stackoverflow.com/users/yourstackoverflow" target="_blank" rel="noopener noreferrer">
+                <a href="https://stackoverflow.com/users/1695094/tito" target="_blank" rel="noopener noreferrer">
                     <Icon aria-hidden="true" name="iconoir:stackoverflow" class="w-5 h-5" /> StackOverflow
                 </a>
             </div>
