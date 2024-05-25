@@ -35,9 +35,10 @@ const searchString = ref('')
 const results = ref([])
 const searching = ref(false)
 
+
 const search = async () => {
     searching.value = true
-    const res = await searchContent(searchString.value, {})
+    const res = await searchContent(searchString.value)
     results.value = res.value // res is a computed so we pluck out the .value and just add it to our ref
     searching.value = false
 }

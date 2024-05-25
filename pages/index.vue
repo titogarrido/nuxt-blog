@@ -23,9 +23,9 @@ useSeoMeta({
   ogImage: 'https://titogarrido.nuxt.pages/images/profile2.jpeg',
   twitterCard: 'summary_large_image',
 })
-
+const today = new Date();
 const { data: articles } = await useAsyncData("all-articles", () =>
-    queryContent("/blog").sort({ published: -1 }).find()
+    queryContent("/blog").where({ draft: { $ne: true }, published: { $lte: today } }).sort({ published: -1 }).find()
 );
 
 </script>

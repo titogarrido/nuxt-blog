@@ -1,9 +1,9 @@
 ---
 title: Welcome
 published: 2024-05-24T00:00:00.000Z
+tags: welcome
 ---
 
-# Welcome
 
 Welcome to my blog. My name is Tito Garrido Ogando and this is my [~~first~~](https://titosoft.github.io) second attempt to create a blog about interesting stuff that I have been studying.
 
