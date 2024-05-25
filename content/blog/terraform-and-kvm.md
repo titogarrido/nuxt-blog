@@ -1,12 +1,14 @@
 ---
-title: Terraform and KVM (x86)
-published: 2019-05-22T00:00:00.000Z
+title: How to use Terraform and KVM
+published: 2024-05-25T00:00:00.000Z
 tags: terraform,kvm,cloud
 ---
 
+This is an update from a former article that I have wrote year ago, on my old blog: [Titosoft](https://titosoft.github.io)
+
 [Terraform](https://terraform.io) is what they call "Infrastructure as a code". It has a different approach from other automation tools like Puppet, Chef or Ansible because it is focused on Cloud Infrastructure.
 
-It supports a bunch of [providers](https://www.terraform.io/docs/providers/index.html) like AWS, Azure, Softlayer... but, as you can see, there is no official support for KVM. I don't want to create a AWS account just to try terraform, so in this article I am going to write step by step how to create a KVM virtual environment using [Terraform libvirt provider](https://github.com/dmacvicar/terraform-provider-libvirt).
+It supports a bunch of [providers](https://www.terraform.io/docs/providers/index.html) like AWS, Azure, Softlayer... and recently a community supported [provider for libvirt](https://registry.terraform.io/providers/dmacvicar/libvirt/latest) has been added. This post is all about learning and I don't want to create a AWS account just to try terraform, so in this article I am going to write step by step how to create a KVM virtual environment using [Terraform libvirt provider](https://registry.terraform.io/providers/dmacvicar/libvirt/latest).
 
 ---
 
