@@ -4,7 +4,7 @@
             <h1 class="text-xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100">
                 Recent Posts
             </h1>
-            <UDivider icon="i-solar-document-add-outline" />
+            <UDivider :ui="{border: { base: 'dark:border-gray-500' }}"  icon="i-solar-document-add-outline" />
         </div>
         <ul class="space-y-16">
             <li v-for="(article, id) in articles" :key="id">
